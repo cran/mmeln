@@ -48,9 +48,10 @@ anova.mmeln=function(object,...,test=TRUE)
         df=c(X$pc+X$pm+X$pl,comp[[1]]$pc + comp[[1]]$pm + comp[[1]]$pl)
         N=c(sum(!is.na(X$Y)),sum(!is.na(comp[[1]]$Y)))
         N2=c(X$N,comp[[1]]$N)
-        sol=data.frame(df,lL,-2*lL,2*df-2*lL,-2*lL+df*log(N),-2*lL+df*log(N2)
+        ent=c(entropy(X),entropy(comp[[1]]))
+        sol=data.frame(df,lL,-2*lL,2*df-2*lL,-2*lL+df*log(N),-2*lL+df*log(N2),-2*lL+df*log(N)+2*ent
         ,c("",format(abs(diff(-2*lL)))),c("",format(1-pchisq(abs(diff(-2*lL)),abs(diff(df))))))
-        names(sol)=c("df","logLik","-2*logLik","AIC","BIC","BIC2","L.Ratio","p-value")
+        names(sol)=c("df","logLik","-2*logLik","AIC","BIC","BIC2","ICL-BIC","L.Ratio","p-value")
         row.names(sol)=unlist(lapply(as.list(sys.call()[-1]),deparse))[1:dim(sol)[1]]
         class(sol)=c("anova.mmeln","data.frame")
         return(sol)
@@ -59,14 +60,15 @@ anova.mmeln=function(object,...,test=TRUE)
     {
         lL=logLik(X)
         df=X$pc+X$pm+X$pl
+        ent=entropy(X)
         N=sum(!is.na(X$Y))
-        sol=data.frame(df,lL,-2*lL,2*df-2*lL,-2*lL+df*log(N),-2*lL+df*log(X$N))
-        names(sol)=c("df","logLik","-2*logLik","AIC","BIC","BIC2")
+        sol=data.frame(df,lL,-2*lL,2*df-2*lL,-2*lL+df*log(N),-2*lL+df*log(X$N),-2*lL+df*log(N)+2*ent)
+        names(sol)=c("df","logLik","-2*logLik","AIC","BIC","BIC2","ICL-BIC")
         row.names(sol)=unlist(lapply(as.list(sys.call()[-1]),deparse))[1:dim(sol)[1]]
     }
     else
     {
-        lL=df=N=N2=vector("numeric",length(comp)+1)
+        lL=df=N=N2=ent=vector("numeric",length(comp)+1)
         for(i in 1:(length(comp)+1))
         {
             if(i==1)
@@ -75,6 +77,7 @@ anova.mmeln=function(object,...,test=TRUE)
                 df[i]=X$pc+X$pm+X$pl
                 N[i]=sum(!is.na(X$Y))
                 N2[i]=X$N
+                ent[i]=entropy(X)
             }
             else
             {
@@ -84,10 +87,11 @@ anova.mmeln=function(object,...,test=TRUE)
                 df[i]=comp[[i-1]]$pc+comp[[i-1]]$pm+comp[[i-1]]$pl
                 N[i]=sum(!is.na(comp[[i-1]]$Y))
                 N2[i]=comp[[i-1]]$N
+                ent[i]=entropy(comp[[i-1]])
             }
         }
-        sol=data.frame(df,lL,-2*lL,2*df-2*lL,-2*lL+df*log(N),-2*lL+df*log(N2))
-        names(sol)=c("df","logLik","-2*logLik","AIC","BIC","BIC2")
+        sol=data.frame(df,lL,-2*lL,2*df-2*lL,-2*lL+df*log(N),-2*lL+df*log(N2),-2*lL+df*log(N)+2*ent)
+        names(sol)=c("df","logLik","-2*logLik","AIC","BIC","BIC2","ICL-BIC")
         row.names(sol)=unlist(lapply(as.list(sys.call()[-1]),deparse))[1:dim(sol)[1]]
 
     }

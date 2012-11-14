@@ -85,24 +85,24 @@ estim.mmeln=function(X,...,mu=NULL,tau=NULL,sigma=NULL,random.start=FALSE,iterli
             stop(paste("Wrong number of covariance parameters, with equal covariance sigma must be of length 1"))
         }
     }
-    if(X$cov=="CS" & X$equalcov==FALSE)
-    {
-        result=estimmmelnCS1(X,list(mu=mu,tau=tau,sigma=sigma),iterlim,tol);
-        X$param=list(mu=result[[1]],tau=result[[2]],sigma=result[[3]])
-        X$niter=result[[4]]
-        X$H1=I.CS1(X)
-        X$H2=IE.CS1(X)
-        class(X)=c("mmeln","mmelnSOL")
-        X
-    }
-    else if(X$cov=="IND" & X$equalcov==FALSE)
+    if(X$cov=="IND" & X$equalcov==FALSE)
     {
         result=estimmmelnIND1(X,list(mu=mu,tau=tau,sigma=sigma),iterlim,tol);
         X$param=list(mu=result[[1]],tau=result[[2]],sigma=result[[3]])
         X$niter=result[[4]]
         X$H1=I.IND1(X)
         X$H2=IE.IND1(X)
-        class(X)=c("mmeln","mmelnSOL")
+        class(X)=c("mmelnSOL","mmeln")
+        X
+    }
+    else if(X$cov=="CS" & X$equalcov==FALSE)
+    {
+        result=estimmmelnCS1(X,list(mu=mu,tau=tau,sigma=sigma),iterlim,tol);
+        X$param=list(mu=result[[1]],tau=result[[2]],sigma=result[[3]])
+        X$niter=result[[4]]
+        X$H1=I.CS1(X)
+        X$H2=IE.CS1(X)
+        class(X)=c("mmelnSOL","mmeln")
         X
     }
     else
@@ -198,27 +198,32 @@ print.mmelnSOL=function(x,...,se.estim="MLR")
         theta=X$Z%*%matrix(X$param[[2]],ncol=X$G-1)
         P=cbind(1,exp(theta))/apply(cbind(1,exp(theta)),1,sum)
     }
-    cat("Solution de l'estimation du melange :\n\nNombre d'iterations : ")
+    cat("Solution of mixture estimation :\n\nNombre d'iterations : ")
     cat(X$niter)
-    cat("\n\nParametre de localisation :\n")
+    if(se.estim=="MLR")
+        cat("\n\nLocation parameters (Robust s.e. estimator) :\n")
+    else if(se.estim=="ML")
+        cat("\n\nLocation parameters (ML s.e. estimator) :\n")
+    else
+        cat("\n\nLocation parameters (Empirical ML s.e. estimator) :\n")
     print(prnt.loc.mmeln(X))
     if(X$pm!=0)
     {
-        cat("\n\nParametre du melange :\n")
+        cat("\n\nMixture parameters :\n")
         print(prnt.mel.mmeln(X))
-        cat("\n\nProportion du melange :\n")
+        cat("\n\nProportions of the mixture :\n")
         Prop=as.data.frame(matrix(round(apply(P,2,mean)*100,digits=1),ncol=X$G))
-        dimnames(Prop)=list("Prop(%)",paste("Groupe",1:X$G))
+        dimnames(Prop)=list("Prop(%)",paste("Group",1:X$G))
         print(Prop)
     }
     else
-        cat("\n\nProportion du melange :\nProp(%) 100")
-    cat("\n\nParametre de variance-covariance de type ")
+        cat("\n\nProportion in mixture :\nProp(%) 100")
+    cat("\n\nVariance-covariance type is ")
     cat(X$cov)
     cat(" :\n")
     if(X$equalcov)
     {
-        cat("\n\nCovariance commune a tous les groupes\n")
+        cat("\n\nHomogeneous Covariance across groups:\n")
         S=cov.tsf(X$param[[3]][[1]],X$cov,X$p)
         dimnames(S)=list(paste("T",1:X$p,sep=""),paste("T",1:X$p,sep=""))
         print(S)
@@ -227,7 +232,7 @@ print.mmelnSOL=function(x,...,se.estim="MLR")
     {
         for(i in 1:X$G)
         {
-            cat("\n\nCovariance Groupe ")
+            cat("\n\nCovariance matrix in group ")
             cat(i)
             cat("\n")
             S=cov.tsf(X$param[[3]][[i]],X$cov,X$p)
@@ -235,7 +240,7 @@ print.mmelnSOL=function(x,...,se.estim="MLR")
             print(S)
         }
     }
-    cat("\n\nNombre de parametres : ")
+    cat("\n\nNumber of parameters : ")
     cat(X$pl+X$pm+X$pc)
     cat("\n\nlog(Likelihood) : ")
     cat(logLik(X))

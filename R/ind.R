@@ -6,7 +6,7 @@
 #############################################
 
 
-##### Algorithme EM appliqué à des mélanges multinormaux avec covariance CS et covariance inégale.
+##### Algorithme EM appliqué à des mélanges multinormaux avec covariance IND et covariance inégale.
 
 
 estimmmelnIND1=function(X,param,iterlim,tol)
@@ -64,6 +64,7 @@ estimmmelnIND1=function(X,param,iterlim,tol)
     warning("Algorithm reached iteration limit without convergence; Results may not be reliable")
     return(list(mu=mu1,tau=tau1,sigma=sigma1,iterlim))
 }
+
 
 #### Estimation du beta et de sigma.
 

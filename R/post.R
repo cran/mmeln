@@ -7,7 +7,16 @@
 post=function(X,...)
 {
     UseMethod("post")
+
 }
+
+### Prototype : entropy(X)
+entropy=function(X,...)
+{
+    UseMethod("entropy")
+}
+
+
 
 post.mmeln=function(X,...,mu=X$param$mu,tau=X$param$tau,sigma=X$param$sigma)
 {
@@ -35,4 +44,10 @@ post.mmeln=function(X,...,mu=X$param$mu,tau=X$param$tau,sigma=X$param$sigma)
     post
 }
 
+
+entropy.mmeln=function(X,...)
+{
+    tauij=post(X)
+    -sum(tauij*log(tauij))
+}
 

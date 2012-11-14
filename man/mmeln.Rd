@@ -5,7 +5,7 @@
 \description{constructor for objects of class mmeln: mixture of
   multivariate normal}
 
-\usage{mmeln(Y,G=2,p=dim(Y)[2],form.loc=NULL,X=NULL,form.mel=NULL,Z=NULL,cov="UN",equalcov=FALSE,param=NULL)}
+\usage{mmeln(Y,G=2,p=dim(Y)[2],form.loc=NULL,X=NULL,form.mel=NULL,Z=NULL,cov="IND",equalcov=FALSE,param=NULL)}
 \arguments{
   \item{Y}{A matrix containing the data used for estimation. This matrix
     may contains NA but it needs at least one observation per row.It's

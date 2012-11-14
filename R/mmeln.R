@@ -1,3 +1,5 @@
+# -*- coding: latin-1 -*-
+
 ##################################################
 ##### mmeln : Mélange de loi normale multivarié. #
 ##################################################
@@ -15,7 +17,7 @@
 mmeln=function(Y,G=2,p=dim(Y)[2]
               ,form.loc=NULL,X=NULL ### design pour la localisation (le design peut varier d'un groupe a l'autre (liste dans ce cas).
               ,form.mel=NULL,Z=NULL ### design pour le melange (le design est unique pour tous les groupes)
-              ,cov="UN"        ### type de matrice de covariance
+              ,cov="IND"        ### type de matrice de covariance
               ,equalcov=FALSE  ### Est-ce que la matrice de covariance differe d'un groupe a l'autre?
               ,param=NULL)     ### liste de liste contenant les valeurs des parametres du modele (ordre a respecter c(par loc,par mel,par cov).
 {                              ### exemple pour une melange a 2 groupes param=list(mu=list(c(1,1),c(2,2)),tau=list(c(0,0),c(0,0))
@@ -219,4 +221,41 @@ mmeln=function(Y,G=2,p=dim(Y)[2]
     objet
 }
 
+
+
+print.mmeln=function(x,...)
+{
+  cat("----Object of type mmeln----\n\n")
+  cat("Number of groups: ")
+  cat(x$G)
+  cat("\n\n")
+  cat("Design Matrices for location of the Y_i:\n")
+  for(i in 1:x$G)
+  {
+      cat(" Group ")
+      cat(i)
+      cat(":\n")
+      Xi=x$Xg[[i]]
+      attributes(Xi)$contrasts=NULL
+      attributes(Xi)$assign=NULL
+      print(Xi)
+      cat("\n")
+  }
+  cat("Structure for Dispersion of the Y_i: \n")
+  cat(x$cov)
+  if(x$equalcov)
+      cat(" structure, equal across groups\n\n")
+  else
+      cat(" structure unequal across groups (Default)\n\n")
+  if (x$G>1)
+  {
+      cat("Design Matrix for mixture design:\n")
+      Z=x$Z[[i]]
+      attributes(Z)$contrasts=NULL
+      attributes(Z)$assign=NULL
+      print(Z)
+      cat("\n")
+  }
+  cat("----The model can now be estimated through the estim function----\n")
+}
 
