@@ -5,7 +5,8 @@
 \description{constructor for objects of class mmeln: mixture of
   multivariate normal}
 
-\usage{mmeln(Y,G=2,p=dim(Y)[2],form.loc=NULL,X=NULL,form.mel=NULL,Z=NULL,cov="IND",equalcov=FALSE,param=NULL)}
+\usage{mmeln(Y,G=2,p=dim(Y)[2],form.loc=NULL,X=NULL,
+form.mel=NULL,Z=NULL,cov="IND",equalcov=FALSE,param=NULL)}
 \arguments{
   \item{Y}{A matrix containing the data used for estimation. This matrix
     may contains NA but it needs at least one observation per row.It's
@@ -89,8 +90,10 @@ except if handle by an advanced user.}
 \examples{
 data(exY)
 ### estimation of the parameters of the mixture
-temps=0:2
-mmeln1=mmeln(Y,G=3,form.loc=list(~temps,~temps+I(temps^2),~temps+I(temps^2)),form.mel=~SEXE,cov="CS")
+temps <- 0:2
+mmeln1 <- mmeln(Y, G = 3,
+                form.loc = list(~temps, ~temps + I(temps^2), ~temps + I(temps^2)),
+                form.mel = ~SEXE, cov = "CS")
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

@@ -135,11 +135,11 @@ multnm=function(Post,tau0,Z,g,iterlim=100,tol=1e-8)
 }
 
 
-##### Fonction pour le traitement des jeux de données incomplet.
+##### Fonction pour le traitement des jeux de donnees incomplet.
 
 
-##### Fonction pour faire une grande matrice inverse, dans le problème de trouver la covariance
-##### dans un jeu de donnée avec des données manquantes.
+##### Fonction pour faire une grande matrice inverse, dans le probleme de trouver la covariance
+##### dans un jeu de donnee avec des donnees manquantes.
 
 
 Xinv=function(Y,Sigma)
@@ -157,8 +157,8 @@ Xinv=function(Y,Sigma)
 }
 
 
-##### Fonction pour calculer des covariances pondérées avec des
-##### données manquantes selon la méthode pairwise. (seulement pour calculer des bons starting values)
+##### Fonction pour calculer des covariances ponderees avec des
+##### donnees manquantes selon la methode pairwise. (seulement pour calculer des bons starting values)
 
 covNA.wt=function(Y,wt)
 {

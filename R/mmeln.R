@@ -1,7 +1,5 @@
-# -*- coding: latin-1 -*-
-
 ##################################################
-##### mmeln : Mélange de loi normale multivarié. #
+##### mmeln : Melange de loi normale multivarie. #
 ##################################################
 
 ### Prototype du Constructeur de l'objet mmeln
@@ -11,7 +9,7 @@
 ### Definition de l'objet mmeln.
 ### D'autres fonctions seront ensuite construites liees a ce type d'objet.
 ### par exemple : post (posterior probabilities) logLik (log vraissemblance)
-###               estim (estimation des paramètres) et d'autres objets peuvent
+###               estim (estimation des parametres) et d'autres objets peuvent
 ###               etre derives.
 
 mmeln=function(Y,G=2,p=dim(Y)[2]
@@ -31,7 +29,7 @@ mmeln=function(Y,G=2,p=dim(Y)[2]
     objet$G=G
     objet$p=p
     objet$pi=c(apply(!is.na(Y),1,sum))
-##### Si une ligne de donnée est vide on invite l'utilisateur à retirer sa ligne de donnée.
+##### Si une ligne de donnee est vide on invite l'utilisateur a retirer sa ligne de donnee.
     if(min(objet$pi)<1)
     {
         stop("At least one row of data is empty. Remove those rows before using mmeln")
@@ -48,7 +46,7 @@ mmeln=function(Y,G=2,p=dim(Y)[2]
 
 ##### Matrice de design pour estimer la moyenne a chaque temps.
 ##### Par defaut on estime une moyenne pour chaque temps mais
-##### on peut proposer un design particulier via la formule où
+##### on peut proposer un design particulier via la formule ou
 ##### en donne la matrice de design X directement
 ##### Comme le design peut varier d'un groupe a l'autre Xg prend
 ##### la forme d'une liste de matrice de design.

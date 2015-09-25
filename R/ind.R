@@ -1,12 +1,12 @@
 #################################################
-### Fonctions reliée à l'estimation de modèle ###
+### Fonctions reliee a l'estimation de modele ###
 ### avec une covariance de type IND.         ###
 ###                                         ###
-### Analyste: Charles-Édouard Giguère      ###
+### Analyste: Charles-Edouard Giguere      ###
 #############################################
 
 
-##### Algorithme EM appliqué à des mélanges multinormaux avec covariance IND et covariance inégale.
+##### Algorithme EM applique a des melanges multinormaux avec covariance IND et covariance inegale.
 
 
 estimmmelnIND1=function(X,param,iterlim,tol)
@@ -20,12 +20,12 @@ estimmmelnIND1=function(X,param,iterlim,tol)
     for(iterationEM in 1:iterlim)
     {
 
-##### Étape E : on calcule l'espérance d'être dans l'un ou l'autre des groupes ce qui donne
-#####           la probabilité a posteriori qui est utilisé pour construire la fonction objective
-#####           Q* à l'étape M.
+##### Etape E : on calcule l'esperance d'etre dans l'un ou l'autre des groupes ce qui donne
+#####           la probabilite a posteriori qui est utilise pour construire la fonction objective
+#####           Q* a l'etape M.
         Post=post(X,tau=tau1,mu=mu1,sigma=sigma1)
 
-##### Étape M : Calcul des proportions
+##### Etape M : Calcul des proportions
 
         if(X$G>1)
         {
@@ -36,7 +36,7 @@ estimmmelnIND1=function(X,param,iterlim,tol)
         {
             tau1=NULL
         }
-#### Étape M : Calcul des paramètres de localisation et de dispersion.
+#### Etape M : Calcul des parametres de localisation et de dispersion.
         loc.disp=estimloc.disp.IND1(X,Post,iterlim,tol,iterationEM)
         mu1=loc.disp[[1]]
         sigma1=loc.disp[[2]]
@@ -95,8 +95,8 @@ estimloc.disp.IND1=function(X,Post,iterlim,tol,iterEM)
 
 
 
-#### méthode qui calcule la matrice hessienne des paramètres du mélange.
-#### idéalement ne rouler qu'une fois car cette méthode peut s'avérer un
+#### methode qui calcule la matrice hessienne des parametres du melange.
+#### idealement ne rouler qu'une fois car cette methode peut s'averer un
 #### peu lente.
 
 I.IND1=function(X)

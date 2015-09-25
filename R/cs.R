@@ -1,12 +1,12 @@
 #################################################
-### Fonctions reliée à l'estimation de modèle ###
+### Fonctions reliee a l'estimation de modele ###
 ### avec une covariance de type CS.          ###
 ###                                         ###
-### Analyste: Charles-Édouard Giguère      ###
+### Analyste: Charles-Edouard Giguere      ###
 #############################################
 
-### On crée une liste de valeur qui pour une valeur de rho donnée retourne une liste de
-### résultat intermédiaire de façon à ne pas les recalculer par la suite.
+### On cree une liste de valeur qui pour une valeur de rho donnee retourne une liste de
+### resultat intermediaire de facon a ne pas les recalculer par la suite.
 ###
 ### La fonction que l'on veut minimiser est la suivante :
 ### \sum_{i=1}^N[\tau_{ij}log|\Lambda_{ij}|] +  ( pfQ1 )
@@ -16,24 +16,24 @@ pfQ.intermediate.CS1=function(rho,X,tau.ij,g)
 {
     intermediate=list()
 
-### Ce résultat est la première partie de la fonction profilée
+### Ce resultat est la premiere partie de la fonction profilee
 ### soit \sum_{i=1}^N\tau_{ij}log|\Lambda_{ij}|
     intermediate$pfQ1=sum(tau.ij*log((1-rho)^(X$pi-1)*(1+(X$pi-1)*rho)))
 
-### Ce résultat est la dérivé de la première partie de la
-### fonction profilée définie précédemment.
+### Ce resultat est la derive de la premiere partie de la
+### fonction profilee definie precedemment.
     intermediate$pfQ1.diff=-sum(tau.ij*(X$pi^2-X$pi)*rho/(1-rho)/(1+(X$pi-1)*rho))
 
-### Ce résultat est la dérivé seconde de la première partie
-### de la fonction profilé définie précédemment.
+### Ce resultat est la derive seconde de la premiere partie
+### de la fonction profile definie precedemment.
     intermediate$pfQ1.hess=-sum(tau.ij*(X$pi^2-X$pi)*(1-(1-X$pi)*rho^2)/(1-rho)^2/(1+(X$pi-1)*rho)^2)
 
-### Ce résultat génère les p inverses de la matrice Lambda pour les calculs subséquents.
+### Ce resultat genere les p inverses de la matrice Lambda pour les calculs subsequents.
     intermediate$Lambda.inv=list()
     for(i in 1:X$p)
         intermediate$Lambda.inv[[i]]=solve(matrix(rho,i,i)+(1-rho)*diag(i))
 
-### Ce résultat génère l'estimation de beta pour cette valeur de rho
+### Ce resultat genere l'estimation de beta pour cette valeur de rho
     dimXg=dim(X$Xg[[g]])[2]
     SXX=matrix(0,dimXg,dimXg)
     SXy=numeric(dimXg)
@@ -43,7 +43,7 @@ pfQ.intermediate.CS1=function(rho,X,tau.ij,g)
         SXy=SXy+c(tau.ij[i]*t(X$Xg[[g]][X$Yv[[i]],])%*%intermediate$Lambda.inv[[X$pi[i]]]%*%X$Yl[[i]])
     }
     intermediate$beta=c(solve(SXX,SXy))
-### Ce résultat génère l'estimation de pfQ2
+### Ce resultat genere l'estimation de pfQ2
     S1=S2=S3=0;
     for(i in 1:X$N)
     {
@@ -92,7 +92,8 @@ estimloc.disp.CS1=function(X,rho,Post,iterlim,tol,iterEM)
             {
                 sigma[[g]]=c(sqrt(interm0$sig2),rho0[g])
                 beta[[g]]=c(interm0$beta)
-                warning(paste("At EM iteration:",iterEM,"estimation of rho exceeded 1. Returned last good parameters."))
+                warning(paste("At EM iteration:",iterEM,
+                              "estimation of rho exceeded 1. Returned last good parameters."))
                 break
             }
             else if (rho0[g]<0)
@@ -100,14 +101,16 @@ estimloc.disp.CS1=function(X,rho,Post,iterlim,tol,iterEM)
                 interm0=pfQ.intermediate.CS1(0,X,c(Post[,g]),g)
                 sigma[[g]]=c(sqrt(interm0$sig2),0)
                 beta[[g]]=c(interm0$beta)
-                warning(paste("At EM iteration:",iterEM,"estimation of rho was below 0. Rho is set at a value of 0."))
+                warning(paste("At EM iteration:",iterEM,
+                              "estimation of rho was below 0. Rho is set at a value of 0."))
                 break
             }
             else if(iter==iterlim)
             {
                 sigma[[g]]=c(sqrt(interm1$sig2),rho1[g])
                 beta[[g]]=c(interm1$beta)
-                warning(paste("At EM iteration:",iterEM,"estimation of covariance parameters did not reach convergence in group",g))
+                warning(paste("At EM iteration:",iterEM,
+                              "estimation of covariance parameters did not reach convergence in group",g))
                 break
             }
             else
@@ -121,7 +124,7 @@ estimloc.disp.CS1=function(X,rho,Post,iterlim,tol,iterEM)
 }
 
 
-##### Algorithme EM appliqué à des mélanges multinormaux avec covariance CS et covariance inégale.
+##### Algorithme EM applique a des melanges multinormaux avec covariance CS et covariance inegale.
 
 
 estimmmelnCS1=function(X,param,iterlim,tol)
@@ -135,12 +138,12 @@ estimmmelnCS1=function(X,param,iterlim,tol)
     for(iterationEM in 1:iterlim)
     {
 
-##### Étape E : on calcule l'espérance d'être dans l'un ou l'autre des groupes ce qui donne
-#####           la probabilité a posteriori qui est utilisé pour construire la fonction objective
-#####           Q* à l'étape M.
+##### Etape E : on calcule l'esperance d'etre dans l'un ou l'autre des groupes ce qui donne
+#####           la probabilite a posteriori qui est utilise pour construire la fonction objective
+#####           Q* a l'etape M.
         Post=post(X,tau=tau1,mu=mu1,sigma=sigma1)
 
-##### Étape M : Calcul des proportions
+##### Etape M : Calcul des proportions
 
         if(X$G>1)
         {
@@ -151,7 +154,7 @@ estimmmelnCS1=function(X,param,iterlim,tol)
         {
             tau1=NULL
         }
-#### Étape M : Calcul des paramètres de localisation et de dispersion.
+#### Etape M : Calcul des parametres de localisation et de dispersion.
         rho=numeric(X$G)
         for(g in 1:X$G)
         {
@@ -186,23 +189,23 @@ estimmmelnCS1=function(X,param,iterlim,tol)
 }
 
 
-#### méthode qui calcule la matrice hessienne des paramètres du mélange.
-#### idéalement ne rouler qu'une fois car cette méthode peut s'avérer un
+#### methode qui calcule la matrice hessienne des parametres du melange.
+#### idealement ne rouler qu'une fois car cette methode peut s'averer un
 #### peu lente.
 
 I.CS1=function(X)
 {
-### on évalue la dimension de la matrice et on l'initialise.
+### on evalue la dimension de la matrice et on l'initialise.
 
     H=matrix(0,X$pl+X$pc+X$pm,X$pl+X$pc+X$pm)
     Pst=post(X)
-### on évalue la sous-matrice des paramètres de localisation.
+### on evalue la sous-matrice des parametres de localisation.
     H.beta=list()
-### on évalue la sous-matrice des paramètres de covariance.
+### on evalue la sous-matrice des parametres de covariance.
     H.sig=list()
     H.rho=list()
     H.rho.sig=list()
-### on évalue la sous matrice des paramètres de beta et covariance.
+### on evalue la sous matrice des parametres de beta et covariance.
     H.beta.xi=list()
 
     if(X$G>1){
@@ -216,7 +219,7 @@ I.CS1=function(X)
     {
         for(j in i:X$G)
         {
-            if(i==j) ### dérivé seconde de log L par theta_j^2
+            if(i==j) ### derive seconde de log L par theta_j^2
             {
                 H.beta[[paste(j,j)]]=matrix(0,dim(X$Xg[[j]])[2],dim(X$Xg[[j]])[2])
                 H.beta.xi[[paste(i,j)]]=matrix(0,dim(X$Xg[[j]])[2],2)
@@ -241,16 +244,22 @@ I.CS1=function(X)
                     Sig=SIG[X$Yv[[k]],X$Yv[[k]]]
                     Sig.inv=Sig.invl[[X$pi[k]]]
                     rij=c(X$Yl[[k]]-as.matrix(Xij)%*%X$param$mu[[j]])
-                    H.beta[[paste(j,j)]]=H.beta[[paste(j,j)]]+Pst[k,j]*(1-Pst[k,j])*(t(Xij)%*%Sig.inv%*%rij%*%t(rij)%*%Sig.inv%*%Xij) -
-                        Pst[k,j]*(t(Xij)%*%Sig.inv%*%Xij)
+                    H.beta[[paste(j,j)]]= H.beta[[paste(j,j)]]+
+                        Pst[k,j]*(1-Pst[k,j]) *
+                            (t(Xij)%*%Sig.inv%*%rij%*%t(rij)%*%Sig.inv%*%Xij) -
+                                Pst[k,j]*(t(Xij)%*%Sig.inv%*%Xij)
 
                     sig=X$param$sigma[[i]][1]
-                    H.sig[[paste(i,j)]]=H.sig[[paste(i,j)]]+Pst[k,i]*( (X$pi[k]^2+X$pi[k])*sig^(-2)-(2*X$pi[k]+3)*sig^(-2)*c(t(rij)%*%Sig.inv%*%rij)+
-                         sig^(-2)*c((t(rij)%*%Sig.inv%*%rij)^2))-Pst[k,i]^2*(c(t(rij)%*%Sig.inv%*%rij)/sig-X$pi[k]/sig)^2
+                    H.sig[[paste(i,j)]]=H.sig[[paste(i,j)]]+Pst[k,i]*
+                        ((X$pi[k]^2+X$pi[k])*sig^(-2)-(2*X$pi[k]+3)*sig^(-2)*c(t(rij)%*%Sig.inv%*%rij)+
+                         sig^(-2)*c((t(rij)%*%Sig.inv%*%rij)^2))-Pst[k,i]^2 *
+                             (c(t(rij)%*%Sig.inv%*%rij)/sig-X$pi[k]/sig)^2
                     A=sig^2*(matrix(1,X$pi[k],X$pi[k])-diag(X$pi[k]))
                     H.rho[[paste(i,j)]]=H.rho[[paste(i,j)]] +
-                        (Pst[k,i]-Pst[k,i]^2)*(-1/2*sum(diag(Sig.inv%*%A))+1/2*c(t(rij)%*%Sig.inv%*%A%*%Sig.inv%*%rij))^2 +
-                            Pst[k,i]*(-sum(diag(-Sig.inv%*%A%*%Sig.inv%*%A))/2-c(t(rij)%*%Sig.inv%*%A%*%Sig.inv%*%A%*%Sig.inv%*%rij))
+                        (Pst[k,i]-Pst[k,i]^2)*
+                            (-1/2*sum(diag(Sig.inv%*%A)) + 1/2*c(t(rij)%*%Sig.inv%*%A%*%Sig.inv%*%rij))^2 +
+                            Pst[k,i]*(-sum(diag(-Sig.inv%*%A%*%Sig.inv%*%A))/2 -
+                                      c(t(rij)%*%Sig.inv%*%A%*%Sig.inv%*%A%*%Sig.inv%*%rij))
                     H.rho.sig[[paste(i,j)]]=H.rho.sig[[paste(i,j)]] +
                         (Pst[k,i]-Pst[k,i]^2)*(c(t(rij)%*%Sig.inv%*%rij)/sig-X$pi[k]/sig) *
                             (-1/2*sum(diag(Sig.inv%*%A))+1/2*c(t(rij)%*%Sig.inv%*%A%*%Sig.inv%*%rij)) -
@@ -259,26 +268,32 @@ I.CS1=function(X)
                         cbind((Pst[k,i]*(c(t(rij)%*%Sig.inv%*%rij)/sig - X$pi[k]/sig -2/sig) -
                               Pst[k,i]^2*(c(t(rij)%*%Sig.inv%*%rij)/sig -X$pi[k]/sig))*t(Xij)%*%Sig.inv%*%rij ,
                               Pst[k,i]*(-2*t(Xij)%*%Sig.inv%*%A%*%Sig.inv%*%rij +
-                                        (1-Pst[k,i])*(-sum(diag(Sig.inv%*%A))/2+c(t(rij)%*%Sig.inv%*%A%*%Sig.inv%*%rij)/2)*t(Xij)%*%Sig.inv%*%rij))
+                                        (1-Pst[k,i])*(-sum(diag(Sig.inv%*%A))/2 +
+                                                      c(t(rij)%*%Sig.inv%*%A%*%Sig.inv%*%rij)/2)*
+                                        t(Xij)%*%Sig.inv%*%rij))
                     if(X$G>1 &i>1)
                     {
                         pi.ij=P[k,i]
                         H.lambda[[paste(i,j)]]=H.lambda[[paste(i,j)]] +
-                            (X$Z[k,]%*%t(X$Z[k,]))*((Pst[k,i]*(1-2*pi.ij)+(2*pi.ij^2-pi.ij))-(Pst[k,i]^2-2*pi.ij*Pst[k,i]+pi.ij^2))
+                            (X$Z[k,]%*%t(X$Z[k,]))*((Pst[k,i]*(1-2*pi.ij)+(2*pi.ij^2-pi.ij))-
+                                                    (Pst[k,i]^2-2*pi.ij*Pst[k,i]+pi.ij^2))
                         H.beta.lambda[[paste(i,j)]]=H.beta.lambda[[paste(i,j)]] +
-                            Pst[k,i]*(1-pi.ij)*t(Xij)%*%Sig.inv%*%rij%*%t(X$Z[k,]) - (Pst[k,i]^2-Pst[k,i]*pi.ij)*t(Xij)%*%Sig.inv%*%rij%*%t(X$Z[k,])
+                            Pst[k,i]*(1-pi.ij)*t(Xij)%*%Sig.inv%*%rij%*%t(X$Z[k,]) - (Pst[k,i]^2-Pst[k,i]*pi.ij)*
+                                t(Xij)%*%Sig.inv%*%rij%*%t(X$Z[k,])
                         H.xi.lambda[[paste(i,j)]]=H.xi.lambda[[paste(i,j)]] +
                             rbind(
-                                  (Pst[k,i]*(1-pi.ij)-Pst[k,i]*(Pst[k,j]-pi.ij))*(c(t(rij)%*%Sig.inv%*%rij)/sig-X$pi[k]/sig)*t(X$Z[k,])
+                                  (Pst[k,i]*(1-pi.ij)-Pst[k,i]*(Pst[k,j]-pi.ij))*(c(t(rij)%*%Sig.inv%*%rij)/
+                                                                                  sig-X$pi[k]/sig)*t(X$Z[k,])
                                   ,
                                   (Pst[k,i]*(1-pi.ij)-Pst[k,i]*(Pst[k,j]-pi.ij))*
-                                  (-1/2*sum(diag(Sig.inv%*%A))+1/2*c(t(rij)%*%Sig.inv%*%A%*%Sig.inv%*%rij))*t(X$Z[k,])
+                                (-1/2*sum(diag(Sig.inv%*%A))+1/2*c(t(rij)%*%Sig.inv%*%A%*%Sig.inv%*%rij))*
+                                t(X$Z[k,])
                                   )
 
                     }
                 }
             }
-            else if(i!=j) ### dérivé seconde de log L par theta_i x theta_j
+            else if(i!=j) ### derive seconde de log L par theta_i x theta_j
             {
                 H.beta[[paste(i,j)]]=matrix(0,dim(X$Xg[[i]])[2],dim(X$Xg[[j]])[2])
                 H.beta.xi[[paste(i,j)]]=0
@@ -315,30 +330,42 @@ I.CS1=function(X)
                     sig.j=X$param$sigma[[j]][1]
                     A.i=sig.i^2*(matrix(1,X$pi[k],X$pi[k])-diag(X$pi[k]))
                     A.j=sig.j^2*(matrix(1,X$pi[k],X$pi[k])-diag(X$pi[k]))
-                    H.beta[[paste(i,j)]]=H.beta[[paste(i,j)]]-Pst[k,i]*Pst[k,j]*(t(Xij.i)%*%Sig.inv.i%*%rij.i%*%t(rij.j)%*%Sig.inv.j%*%Xij.j)
+                    H.beta[[paste(i,j)]]=H.beta[[paste(i,j)]]-
+                        Pst[k,i]*Pst[k,j]*(t(Xij.i)%*%Sig.inv.i%*%rij.i%*%t(rij.j)%*%Sig.inv.j%*%Xij.j)
                     H.sig[[paste(i,j)]]=H.sig[[paste(i,j)]]-
-                        Pst[k,i]*Pst[k,j]*(c(t(rij.i)%*%Sig.inv.i%*%rij.i)/sig.i-X$pi[k]/sig.i)*(c(t(rij.j)%*%Sig.inv.j%*%rij.j)/sig.j-X$pi[k]/sig.j)
+                        Pst[k,i]*Pst[k,j]*(c(t(rij.i)%*%Sig.inv.i%*%rij.i)/sig.i-X$pi[k]/sig.i)*
+                            (c(t(rij.j)%*%Sig.inv.j%*%rij.j)/sig.j-X$pi[k]/sig.j)
                     H.rho[[paste(i,j)]]=H.rho[[paste(i,j)]] -
-                        Pst[k,i]*Pst[k,j]*(-1/2*sum(diag(Sig.inv.i%*%A.i))+1/2*c(t(rij.i)%*%Sig.inv.i%*%A.i%*%Sig.inv.i%*%rij.i)) *
-                            (-1/2*sum(diag(Sig.inv.j%*%A.j))+1/2*c(t(rij.j)%*%Sig.inv.j%*%A.j%*%Sig.inv.j%*%rij.j))
+                        Pst[k,i]*Pst[k,j]*(-1/2*sum(diag(Sig.inv.i%*%A.i)) +
+                                           1/2*c(t(rij.i)%*%Sig.inv.i%*%A.i%*%Sig.inv.i%*%rij.i)) *
+                            (-1/2*sum(diag(Sig.inv.j%*%A.j)) +
+                             1/2*c(t(rij.j)%*%Sig.inv.j%*%A.j%*%Sig.inv.j%*%rij.j))
                     H.rho.sig[[paste(i,j)]]=H.rho.sig[[paste(i,j)]] -
                         Pst[k,i]*Pst[k,j]*(c(t(rij.i)%*%Sig.inv.i%*%rij.i)/sig.i-X$pi[k]/sig.i) *
-                            (-1/2*sum(diag(Sig.inv.j%*%A.j))+1/2*c(t(rij.j)%*%Sig.inv.j%*%A.j%*%Sig.inv.j%*%rij.j))
+                            (-1/2*sum(diag(Sig.inv.j%*%A.j)) +
+                             1/2*c(t(rij.j)%*%Sig.inv.j%*%A.j%*%Sig.inv.j%*%rij.j))
                     H.rho.sig[[paste(j,i)]]=H.rho.sig[[paste(j,i)]] -
                         Pst[k,i]*Pst[k,j]*(c(t(rij.j)%*%Sig.inv.j%*%rij.j)/sig.j-X$pi[k]/sig.j) *
-                            (-1/2*sum(diag(Sig.inv.i%*%A.i))+1/2*c(t(rij.i)%*%Sig.inv.i%*%A.i%*%Sig.inv.i%*%rij.i))
+                            (-1/2*sum(diag(Sig.inv.i%*%A.i)) +
+                             1/2*c(t(rij.i)%*%Sig.inv.i%*%A.i%*%Sig.inv.i%*%rij.i))
                     pi.i=P[k,i]
                     pi.j=P[k,j]
                     if(X$G>1 & i>1)
                         H.lambda[[paste(i,j)]]=H.lambda[[paste(i,j)]] +
-                            (X$Z[k,]%*%t(X$Z[k,]))*((2*pi.i*pi.j-(Pst[k,i]*pi.j+Pst[k,j]*pi.i))-(Pst[k,i]-pi.i)*(Pst[k,j]-pi.j))
+                            (X$Z[k,]%*%t(X$Z[k,]))*((2*pi.i*pi.j-(Pst[k,i]*pi.j+Pst[k,j]*pi.i)) -
+                                                    (Pst[k,i]-pi.i)*(Pst[k,j]-pi.j))
                     H.beta.xi[[paste(i,j)]]=H.beta.xi[[paste(i,j)]]+
-                        cbind(-Pst[k,i]*Pst[k,j]*(c(t(rij.j)%*%Sig.inv.j%*%rij.j)/sig.j -X$pi[k]/sig.j)*t(Xij.i)%*%Sig.inv.i%*%rij.i ,
-                              -Pst[k,i]*Pst[k,j]*(-sum(diag(Sig.inv.j%*%A.j))/2+c(t(rij.j)%*%Sig.inv.j%*%A.j%*%Sig.inv.j%*%rij.j)/2)*
+                        cbind(-Pst[k,i]*Pst[k,j]*(c(t(rij.j)%*%Sig.inv.j%*%rij.j)/sig.j -
+                                                  X$pi[k]/sig.j)*t(Xij.i)%*%Sig.inv.i%*%rij.i ,
+                              -Pst[k,i]*Pst[k,j]*
+                              (-sum(diag(Sig.inv.j%*%A.j))/2 +
+                               c(t(rij.j)%*%Sig.inv.j%*%A.j%*%Sig.inv.j%*%rij.j)/2)*
                               t(Xij.i)%*%Sig.inv.i%*%rij.i)
                      H.beta.xi[[paste(j,i)]]=H.beta.xi[[paste(j,i)]]+
-                        cbind(-Pst[k,i]*Pst[k,j]*(c(t(rij.i)%*%Sig.inv.i%*%rij.i)/sig.i -X$pi[k]/sig.i)*t(Xij.j)%*%Sig.inv.j%*%rij.j ,
-                              -Pst[k,i]*Pst[k,j]*(-sum(diag(Sig.inv.i%*%A.i))/2+c(t(rij.i)%*%Sig.inv.i%*%A.i%*%Sig.inv.i%*%rij.i)/2)*
+                        cbind(-Pst[k,i]*Pst[k,j]*(c(t(rij.i)%*%Sig.inv.i%*%rij.i)/sig.i -
+                                                  X$pi[k]/sig.i)*t(Xij.j)%*%Sig.inv.j%*%rij.j ,
+                              -Pst[k,i]*Pst[k,j]*(-sum(diag(Sig.inv.i%*%A.i))/2 +
+                                                  c(t(rij.i)%*%Sig.inv.i%*%A.i%*%Sig.inv.i%*%rij.i)/2)*
                               t(Xij.j)%*%Sig.inv.j%*%rij.j)
                     if(X$G>1 & j>1)
                     {
@@ -347,10 +374,11 @@ I.CS1=function(X)
                                 Pst[k,i]*(Pst[k,j]-pi.j)*t(Xij.i)%*%Sig.inv.i%*%rij.i%*%t(X$Z[k,])
                         H.xi.lambda[[paste(i,j)]]=H.xi.lambda[[paste(i,j)]] +
                             rbind(
-                                  (-Pst[k,i]*pi.j-Pst[k,i]*(Pst[k,j]-pi.j))*(c(t(rij.i)%*%Sig.inv.i%*%rij.i)/sig.i-X$pi[k]/sig.i)*t(X$Z[k,])
-                                  ,
+                                  (-Pst[k,i]*pi.j-Pst[k,i]*(Pst[k,j]-pi.j))*(c(t(rij.i)%*%Sig.inv.i%*%rij.i)/sig.i
+                                                                             - X$pi[k]/sig.i)*t(X$Z[k,]),
                                   (-Pst[k,i]*pi.j-Pst[k,i]*(Pst[k,j]-pi.j))*
-                                  (-1/2*sum(diag(Sig.inv.i%*%A.i))+1/2*c(t(rij.i)%*%Sig.inv.i%*%A.i%*%Sig.inv.i%*%rij.i))*t(X$Z[k,])
+                                  (-1/2*sum(diag(Sig.inv.i%*%A.i))+
+                                   1/2*c(t(rij.i)%*%Sig.inv.i%*%A.i%*%Sig.inv.i%*%rij.i))*t(X$Z[k,])
                                   )
 
                     }
@@ -361,17 +389,20 @@ I.CS1=function(X)
                                 Pst[k,j]*(Pst[k,i]-pi.i)*t(Xij.j)%*%Sig.inv.j%*%rij.j%*%t(X$Z[k,])
                         H.xi.lambda[[paste(j,i)]]=H.xi.lambda[[paste(j,i)]] +
                             rbind(
-                                  (-Pst[k,j]*pi.i-Pst[k,j]*(Pst[k,i]-pi.i))*(c(t(rij.j)%*%Sig.inv.j%*%rij.j)/sig.j-X$pi[k]/sig.j)*t(X$Z[k,])
+                                  (-Pst[k,j]*pi.i-Pst[k,j]*(Pst[k,i]-pi.i))*
+                                (c(t(rij.j)%*%Sig.inv.j%*%rij.j)/sig.j -
+                                 X$pi[k]/sig.j)*t(X$Z[k,])
                                   ,
                                   (-Pst[k,j]*pi.i-Pst[k,j]*(Pst[k,i]-pi.i))*
-                                  (-1/2*sum(diag(Sig.inv.j%*%A.j))+1/2*c(t(rij.j)%*%Sig.inv.j%*%A.j%*%Sig.inv.j%*%rij.j))*t(X$Z[k,])
+                                  (-1/2*sum(diag(Sig.inv.j%*%A.j)) +
+                                   1/2*c(t(rij.j)%*%Sig.inv.j%*%A.j%*%Sig.inv.j%*%rij.j))*t(X$Z[k,])
                                   )
 
                     }
                 }
                 if(X$G>1 & i>1)
-                    H.lambda[[paste(j,i)]]=t(H.lambda[[paste(i,j)]])
-                H.beta[[paste(j,i)]]=t(H.beta[[paste(i,j)]])
+                    H.lambda[[paste(j,i)]] = t(H.lambda[[paste(i,j)]])
+                H.beta[[paste(j,i)]] = t(H.beta[[paste(i,j)]])
 
             }
         }
