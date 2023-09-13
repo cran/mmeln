@@ -1,6 +1,7 @@
 \encoding{latin1}
 \name{mmeln-package}
 \alias{mmeln.package}
+\alias{mmeln-package}
 \docType{package}
 \title{\packageTitle{mmeln}}
 \description{\packageDescription{mmeln}}
@@ -9,8 +10,10 @@
 The DESCRIPTION file:
 \packageDESCRIPTION{mmeln}
 \packageIndices{mmeln}
-~~ An overview of how to use the package, including the most important ~~
-~~ functions ~~
+
+This package allows to fit multivariate normal mixture. Predictors of
+group membership can also be allowed in the model. 
+
 }
 \author{
 \packageAuthor{mmeln}

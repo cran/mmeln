@@ -1,5 +1,5 @@
-e78898a4b2fbc7f16219ac842a01404b *ChangeLog
-444d14b5b6549e1c7e3dcac5b6966646 *DESCRIPTION
+69ca4bafdbc3360a4465d9e99982cba8 *ChangeLog
+cef0966192c4e42b206f731ac6dcba1c *DESCRIPTION
 f2ab5369656d4bc3f58861201b83431d *NAMESPACE
 d94f8c21acf6601d54dfb3e86ca5863c *R/cs.R
 797b2e25e0cd1231d89243a17f0a4263 *R/estim.R
@@ -8,12 +8,12 @@ f1241bc62db1563e956d1991991ddee7 *R/logLik.R
 d3e58a0b9386632373bf177f5242d872 *R/mmeln.R
 805509b9ae6437ef0eddb9192f03cb77 *R/mutil.R
 769511a709ce2ff10b7c576649545a7d *R/post.R
-8a3fad31ddad2c45515b28a9a3f30ed9 *build/partial.rdb
+7cac19088e7254d74eaf1cb345470675 *build/partial.rdb
 026ac5438ebfc8666dbba7bfcc6683ac *data/exY.RData
 d6c557e73461f23bc8cd34a51f5c5d89 *man/dmnorm.Rd
 d0ba8fb86f74b8bc8d3a55cc7d28af76 *man/estim.mmeln.Rd
 94f63a277066413418454aca2e6cd430 *man/exY.Rd
-2f0162db8e22f1987f5966fa50e942bb *man/mmeln-package.Rd
+2eec0070418c54c41fc856450c05e052 *man/mmeln-package.Rd
 9697e3d320ec2862f6966a1c9713c61c *man/mmeln.Rd
 dd44cbf978cbf2647db634df7e07c2ac *man/mutil.Rd
 e837b5faad4e458a400fcc73f724c2cb *man/post.Rd
